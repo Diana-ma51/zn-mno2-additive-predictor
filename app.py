@@ -17,10 +17,10 @@ st.set_page_config(
 )
 
 # ===== 路径 =====
-MODEL_PATH = Path("xgb_model_seed48.pkl")
-FEATURE_PATH = Path("feature_names_seed48.pkl")
+MODEL_PATH = Path("xgb_model_201_9features.joblib")
+FEATURE_PATH = Path("feature_names_201_9features.pkl")
 LOGO_PATH = Path("logo.png")
-SHAP_PATH = Path("SHAP_Importance_seed48.png")
+SHAP_PATH = Path("SHAP_Importance_201_9features.png")
 BACKGROUND_PATH = Path("background.png")
 
 # ===== 加载背景图为 base64 =====
@@ -32,13 +32,13 @@ else:
 
 EXPECTED_FEATURES = [
     "1.分子量", "2.溶解度", "3.添加剂含量", "4.Zn吸附能",
-    "5.MnO2吸附能", "MolWt", "Chi1", "NumValenceElectrons",
-    "Chi0", "NumHeavyAtoms",
+    "5.MnO2吸附能", "Chi1", "NumValenceElectrons",
+    "NumHeavyAtoms", "Chi0",
 ]
 DEFAULTS = {
     "mw": 200.0, "sol": 100.0, "content": 1.0,
-    "zn": -1.0, "mno2": -1.0, "molwt": 200.0,
-    "chi1": 5.0, "nve": 50, "chi0": 10.0, "nha": 20,
+    "zn": -1.0, "mno2": -1.0,
+    "chi1": 5.0, "nve": 50, "nha": 20, "chi0": 10.0,
 }
 
 # ===== 全局 CSS =====
@@ -215,8 +215,8 @@ def load_model(model_stamp, feature_stamp):
         raise ValueError("Feature-name file does not match the page input order.")
     if not callable(getattr(model, "predict", None)):
         raise TypeError("The model file has no callable predict() method.")
-    if int(getattr(model, "n_features_in_", -1)) != 10:
-        raise ValueError("Model input dimension is not 10.")
+    if int(getattr(model, "n_features_in_", -1)) != 9:
+        raise ValueError("Model input dimension is not 9.")
     return model, names
 
 
@@ -232,17 +232,17 @@ def clear_prediction():
 
 
 def validate_input(data):
-    if data.shape != (1, 10) or not np.isfinite(data).all():
-        raise ValueError("Please enter 10 valid finite values.")
-    if data[0, 0] <= 0 or data[0, 5] <= 0:
-        raise ValueError("Molecular weight and MolWt must be greater than 0.")
+    if data.shape != (1, 9) or not np.isfinite(data).all():
+        raise ValueError("Please enter 9 valid finite values.")
+    if data[0, 0] <= 0:
+        raise ValueError("Molecular weight must be greater than 0.")
     if data[0, 1] < 0:
         raise ValueError("Solubility cannot be negative.")
     if not 0 <= data[0, 2] <= 100:
         raise ValueError("Additive content must be between 0 and 100 wt.%.")
-    if data[0, 6] < 0 or data[0, 8] < 0:
+    if data[0, 5] < 0 or data[0, 8] < 0:
         raise ValueError("Chi1 and Chi0 cannot be negative.")
-    for index, label in [(7, "valence electrons"), (9, "heavy atoms")]:
+    for index, label in [(6, "valence electrons"), (7, "heavy atoms")]:
         value = data[0, index]
         if value < 1 or value != np.floor(value):
             raise ValueError(f"Number of {label} must be a positive integer.")
@@ -277,7 +277,7 @@ if st.session_state.page == "welcome":
         <div class="feature-card">
             <div class="feature-icon">🎯</div>
             <div class="feature-title">High Accuracy</div>
-            <div class="feature-desc">Test R² = 0.853</div>
+            <div class="feature-desc">Test R² = 0.801</div>
         </div>
         <div class="feature-card">
             <div class="feature-icon">🔍</div>
@@ -291,7 +291,7 @@ if st.session_state.page == "welcome":
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        if st.button("🚀 Start Prediction", type="primary", use_container_width=True):
+        if st.button("🚀 Start Prediction", type="primary", width='stretch'):
             st.session_state.page = "main"
             st.rerun()
 
@@ -314,16 +314,17 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     st.markdown("**Algorithm:** XGBoost Regressor")
     st.markdown("**Random seed:** 48")
-    st.markdown("**Input features:** 10")
+    st.markdown("**Input features:** 9")
     st.markdown("**Target:** Capacity retention (%)")
-    st.markdown("**Test R²:** 0.853")
+    st.markdown("**Test R²:** 0.801")
+    st.caption("Performance is conditional on a 201-record set selected after residual review of 206 records. The held-out split contains 41 records.")
     st.divider()
-    if st.button("🔄 Reset", key="reset", use_container_width=True):
+    if st.button("🔄 Reset", key="reset", width='stretch'):
         for key, value in DEFAULTS.items():
             st.session_state[key] = value
         clear_prediction()
         st.rerun()
-    if st.button("🏠 Back to Home", use_container_width=True):
+    if st.button("🏠 Back to Home", width='stretch'):
         st.session_state.page = "welcome"
         st.rerun()
     st.divider()
@@ -337,7 +338,7 @@ with logo_col:
 with title_col:
     st.title("Material Retention Predictor")
     st.caption("**Application**: Electrolyte additive screening for aqueous Zn-MnO₂ batteries | "
-               "XGBoost + SHAP | Test R² = 0.85")
+               "XGBoost + SHAP | Test R² = 0.80")
 st.divider()
 
 # 加载模型
@@ -352,7 +353,7 @@ tab_predict, tab_features, tab_model = st.tabs(["🎯 Prediction", "📖 Feature
 
 with tab_predict:
     st.subheader("🧬 Input Material Features")
-    st.info("💡 **Instructions**: Enter the 10 features of an additive to predict its capacity retention on the MnO₂ cathode.")
+    st.info("💡 **Instructions**: Enter the 9 features of an additive to predict its capacity retention on the MnO₂ cathode.")
     left, right = st.columns(2, gap="large")
     with left:
         mw = st.number_input("1. Molecular weight (g/mol)", min_value=0.0, step=10.0, key="mw", on_change=clear_prediction)
@@ -361,17 +362,16 @@ with tab_predict:
         zn = st.number_input("4. Zn adsorption energy (eV)", step=0.1, format="%.4f", key="zn", on_change=clear_prediction)
         mno2 = st.number_input("5. MnO₂ adsorption energy (eV)", step=0.1, format="%.4f", key="mno2", on_change=clear_prediction)
     with right:
-        molwt = st.number_input("6. MolWt · RDKit molecular weight (g/mol)", min_value=0.0, step=10.0, key="molwt", on_change=clear_prediction)
-        chi1 = st.number_input("7. Chi1 · First-order connectivity index", min_value=0.0, step=0.1, format="%.4f", key="chi1", on_change=clear_prediction)
-        nve = st.number_input("8. NumValenceElectrons · valence electrons", min_value=1, step=1, key="nve", on_change=clear_prediction)
+        chi1 = st.number_input("6. Chi1 · First-order connectivity index", min_value=0.0, step=0.1, format="%.4f", key="chi1", on_change=clear_prediction)
+        nve = st.number_input("7. NumValenceElectrons · valence electrons", min_value=1, step=1, key="nve", on_change=clear_prediction)
+        nha = st.number_input("8. NumHeavyAtoms · heavy atoms", min_value=1, step=1, key="nha", on_change=clear_prediction)
         chi0 = st.number_input("9. Chi0 · Zeroth-order connectivity index", min_value=0.0, step=0.1, format="%.4f", key="chi0", on_change=clear_prediction)
-        nha = st.number_input("10. NumHeavyAtoms · heavy atoms", min_value=1, step=1, key="nha", on_change=clear_prediction)
 
-    clicked = st.button("🎯 Predict Retention", type="primary", use_container_width=True, disabled=model is None, key="predict")
+    clicked = st.button("🎯 Predict Retention", type="primary", width='stretch', disabled=model is None, key="predict")
     if clicked:
         clear_prediction()
         try:
-            input_data = np.array([[mw, sol, content, zn, mno2, molwt, chi1, nve, chi0, nha]])
+            input_data = np.array([[mw, sol, content, zn, mno2, chi1, nve, nha, chi0]])
             validate_input(input_data)
             with st.spinner("🔄 Computing..."):
                 output = np.asarray(model.predict(input_data), dtype=float).reshape(-1)
@@ -392,14 +392,14 @@ with tab_predict:
         result_df = pd.DataFrame([{
             'Molecular weight': mw, 'Solubility': sol, 'Additive content': content,
             'Zn adsorption energy': zn, 'MnO2 adsorption energy': mno2,
-            'MolWt': molwt, 'Chi1': chi1, 'NumValenceElectrons': nve,
-            'Chi0': chi0, 'NumHeavyAtoms': nha,
+            'Chi1': chi1, 'NumValenceElectrons': nve,
+            'NumHeavyAtoms': nha, 'Chi0': chi0,
             'Predicted retention (%)': round(prediction, 2),
         }])
         csv = result_df.to_csv(index=False).encode('utf-8-sig')
         st.download_button("📥 Download Prediction (CSV)", data=csv,
                            file_name=f"prediction_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                           mime='text/csv', use_container_width=True)
+                           mime='text/csv', width='stretch')
 
 with tab_features:
     st.subheader("📖 Feature Description")
@@ -411,19 +411,18 @@ with tab_features:
 | Additive content | wt.% | May have an optimum |
 | Zn adsorption energy | eV | Depends on sign convention |
 | MnO₂ adsorption energy | eV | Depends on sign convention |
-| MolWt | g/mol | No fixed direction |
 | Chi1 | dimensionless | No fixed direction |
 | NumValenceElectrons | count | No fixed direction |
-| Chi0 | dimensionless | No fixed direction |
 | NumHeavyAtoms | count | No fixed direction |
+| Chi0 | dimensionless | No fixed direction |
 """)
 
 with tab_model:
     st.subheader("📊 Model Performance")
     c1, c2, c3 = st.columns(3)
-    c1.metric("🧪 Training R²", "0.976")
-    c2.metric("🎯 Test R²", "0.853")
-    c3.metric("📏 Test RMSE", "7.55")
+    c1.metric("🧪 Training R²", "0.949")
+    c2.metric("🎯 Test R²", "0.801")
+    c3.metric("📏 Test RMSE", "8.78 pp")
     st.subheader("🔎 SHAP Feature Importance")
     if SHAP_PATH.is_file():
-        st.image(str(SHAP_PATH), caption="📊 SHAP · seed48", use_container_width=True)
+        st.image(str(SHAP_PATH), caption="📊 SHAP · 201 records, nine features", width='stretch')
