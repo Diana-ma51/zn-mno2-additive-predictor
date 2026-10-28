@@ -176,9 +176,6 @@ with explanation:
 with methods:
     st.subheader('Evaluation summary')
     st.dataframe(pd.DataFrame({'Evaluation':['Training','Held-out test','5-fold CV (mean ± SD)','14-additive evaluation'],'Records':['160','41','201','14'],'R²':['0.949','0.801','0.729 ± 0.124','0.496'],'RMSE (pp)':['4.37','8.78','—','6.99'],'MAE (pp)':['3.52','7.34','—','5.31']}),hide_index=True,width='stretch')
-    st.markdown('**Data and protocol.** The fixed dataset contains 201 of 206 original records. Records 3, 81, 109, 154 and 160 were removed following residual review using the full dataset. Evaluation metrics are conditional on this selection and are not an independent estimate for the unfiltered dataset. The split seed is 48. Cross-validation uses fixed model parameters.')
-    st.markdown('**Additive evaluation.** Add-2 shares its molecular identity with a modelling record under different conditions. The 14-additive set is therefore not wholly independent at the molecular level.')
-    st.markdown('**Inputs.** Molecular weight is retained once; the duplicate MolWt descriptor is excluded. Connectivity indices and atom/electron counts must use the same molecular representation as training.')
     st.caption('Model version: 201 records / 9 features · verified against the corresponding analysis workbook. pp = percentage points.')
 st.divider()
 st.caption('Zn–MnO₂ additive screening · Research interface · XGBoost + SHAP')
