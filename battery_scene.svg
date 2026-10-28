@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+<defs>
+<linearGradient id="water" x2=".8" y2="1"><stop stop-color="#c9f5ff" stop-opacity=".7"/><stop offset=".5" stop-color="#55b4e7" stop-opacity=".3"/><stop offset="1" stop-color="#1e70ad" stop-opacity=".5"/></linearGradient>
+<linearGradient id="metal" x2="1" y2=".8"><stop stop-color="#eefaff"/><stop offset=".3" stop-color="#9fc4dd"/><stop offset=".55" stop-color="#e5f5fc"/><stop offset="1" stop-color="#5687b0"/></linearGradient>
+<linearGradient id="blue" x2="1" y2="1"><stop stop-color="#74d6f3"/><stop offset=".4" stop-color="#328ed0"/><stop offset="1" stop-color="#164a87"/></linearGradient>
+<radialGradient id="drop" cx=".3" cy=".2"><stop stop-color="#fff" stop-opacity=".9"/><stop offset=".3" stop-color="#9ee5ff" stop-opacity=".2"/><stop offset=".8" stop-color="#318ac3" stop-opacity=".14"/><stop offset="1" stop-color="#a7e6ff" stop-opacity=".65"/></radialGradient>
+<filter id="shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+<pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#8bc6e6" stroke-opacity=".14"/></pattern>
+</defs>
+<rect width="640" height="440" fill="url(#grid)"/>
+<ellipse cx="315" cy="360" rx="210" ry="25" fill="#124c88" opacity=".22" filter="url(#shadow)"/>
+<g stroke="#a6dcf4" fill="none" opacity=".45"><ellipse cx="322" cy="355" rx="247" ry="50"/><ellipse cx="322" cy="355" rx="223" ry="40" stroke-dasharray="3 7"/></g>
+<!-- Perspective container: translucent aqueous phase, schematic only. -->
+<path d="M126 137L399 74L528 150L254 218Z" fill="#d4f3ff" fill-opacity=".22" stroke="#d8f6ff" stroke-width="1.5"/>
+<path d="M126 137L254 218V352L126 273Z" fill="url(#water)" stroke="#97d4f0"/>
+<path d="M254 218L528 150V286L254 352Z" fill="url(#water)" stroke="#b5e6fb"/>
+<path d="M126 273L399 211L528 286L254 352Z" fill="#7cc8ee" opacity=".2"/>
+<!-- Zinc plate with explicit edge thickness. -->
+<path d="M167 134L217 122L304 173L254 186Z" fill="#effaff" stroke="#a0cee6"/>
+<path d="M167 134L254 186V310L167 257Z" fill="url(#metal)" stroke="#d4effd"/>
+<path d="M254 186L304 173V297L254 310Z" fill="#5d94ba" stroke="#a0cee6"/>
+<path d="M188 128V94L206 90V123" fill="#afccdf" stroke="#d6effd"/>
+<!-- MnO2 plate. -->
+<path d="M364 88L414 76L499 126L449 139Z" fill="#a3e6fb" stroke="#b7edff"/>
+<path d="M364 88L449 139V263L364 211Z" fill="url(#blue)" stroke="#a2ddf7"/>
+<path d="M449 139L499 126V251L449 263Z" fill="#18578e" stroke="#8bcde9"/>
+<path d="M386 82V48L404 44V79" fill="#70abd0" stroke="#b5e6fc"/>
+<!-- A thin separator between the plates. -->
+<path d="M285 111L293 109L380 160L372 162V287L285 235Z" fill="#e9faff" fill-opacity=".42" stroke="#e4faff" stroke-opacity=".65"/>
+<g fill="url(#drop)" stroke="#b4eaff" stroke-width=".8"><circle cx="324" cy="197" r="14"/><circle cx="348" cy="249" r="10"/><circle cx="303" cy="264" r="7"/><circle cx="396" cy="285" r="6"/><circle cx="490" cy="57" r="17"/><circle cx="111" cy="211" r="9"/></g>
+<g fill="#f0fcff" font-family="Arial,sans-serif" text-anchor="middle"><text x="211" y="226" font-size="30" transform="rotate(31 211 226)">Zn</text><text x="407" y="182" font-size="26" transform="rotate(31 407 182)">MnO₂</text><text x="324" y="201" font-size="9" fill="#22567d">Zn²⁺</text></g>
+<g stroke="#376c97" fill="none" stroke-width="1"><path d="M173 248L83 294H30"/><path d="M465 210L555 230H614"/><path d="M330 310V383H450"/></g>
+<g font-family="Arial,sans-serif" fill="#173f62" font-size="13" letter-spacing=".5"><text x="30" y="313">Zn ANODE</text><text x="620" y="251" text-anchor="end">MnO₂ CATHODE</text><text x="345" y="404">AQUEOUS ELECTROLYTE</text></g>
+<path d="M135 144L250 214M262 226L518 161" stroke="white" stroke-width="2" opacity=".7" fill="none"/>
+</svg>
